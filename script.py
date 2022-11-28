@@ -8,8 +8,8 @@ from discord_webhook import DiscordWebhook, DiscordEmbed
 from xml.etree.ElementTree import fromstring, ElementTree
 
 est_timezone = pytz.timezone('US/Eastern')
-est_timenow = est_timezone.localize(parse(str(pd.Timestamp.now())))
-est_timenow = datetime.strptime(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
+est_timenow = datetime.now(est_timezone)
+est_timenow = datetime.strptime(est_timenow.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
 print("Nasa News Bot is running")
 print("Est Time Now", est_timenow)
 
@@ -58,8 +58,8 @@ def send_message(response):
         pubDate = parse(item.find('pubDate').text)
         
         # check if there is any new news published in last 12 hours
-        est_timezone  = est_timezone - timedelta(hours=12) 
-        if pubDate > est_timezone:
+        est_time_12  = est_timenow - timedelta(hours=12) 
+        if pubDate > est_time_12:
             send_message_to_discord(title, description, link, pubDate, image_url)
             print("Message sent to discord")
                 
