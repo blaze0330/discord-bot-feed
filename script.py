@@ -15,8 +15,7 @@ print("Est Time Now", est_timenow)
 
 
 url = "https://www.nasa.gov/rss/dyn/breaking_news.rss"
-# discord_webhook_url = "https://discord.com/api/webhooks/940522536557498368/un_14JP-n7T6haQzIhsDB9Dfj_XjWB_2wYFK6oD-opeC-ZfRhgH29_LSbWnNGnOzGi5B"
-discord_webhook_url = "https://discord.com/api/webhooks/940522536557498368/un_14JP-n7T6haQzIhsDB9Dfj_XjWB_2wYFK6oD-opeC-ZfRhgH29_LSbWnNGnOzGi5B"
+# discord_webhook_url = ""
 
 def create_get_request(url):
     """ create a get request to the url and return the response """
