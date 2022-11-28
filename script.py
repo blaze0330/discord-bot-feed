@@ -15,7 +15,7 @@ print("Est Time Now", est_timenow)
 
 
 url = "https://www.nasa.gov/rss/dyn/breaking_news.rss"
-# discord_webhook_url = ""
+discord_webhook_url = ""
 
 def create_get_request(url):
     """ create a get request to the url and return the response """
@@ -42,7 +42,7 @@ def sleep_decorator(function):
         sleep(60*60*12)  # 12 hours
     return wrapper
 
-# @sleep_decorator
+@sleep_decorator
 def send_message(response):
     """ 
     main function to iterate over the response and send message to discord
@@ -56,7 +56,6 @@ def send_message(response):
         description = item.find('description').text
         link = item.find('link').text
         pubDate = parse(item.find('pubDate').text)
-        
         
         # check if there is any new news published in last 12 hours
         est_timezone  = est_timezone - timedelta(hours=12) 
