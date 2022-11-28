@@ -1,9 +1,17 @@
 import requests
+import pytz
 import pandas as pd
 from time import sleep
-from bs4 import BeautifulSoup
+from datetime import datetime
 from dateutil.parser import parse
 from discord_webhook import DiscordWebhook, DiscordEmbed
+from xml.etree.ElementTree import fromstring, ElementTree
+
+est_timezone = pytz.timezone('US/Eastern')
+est_timenow = est_timezone.localize(parse(str(pd.Timestamp.now())))
+est_timenow = datetime.strptime(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
+print("Nasa News Bot is running")
+print("Est Time Now", est_timenow)
 
 
 url = "https://www.nasa.gov/rss/dyn/breaking_news.rss"
@@ -27,21 +35,6 @@ def send_message_to_discord(title, description, link, pubDate):
     webhook.add_embed(embed)
     webhook.execute()
 
-# # not in use right now
-# def response_to_dataframe(response):
-#     final_output = []
-#     Bs_data = BeautifulSoup(response.text, "xml")
-#     for item in Bs_data.findAll("item"):
-#         nasa_data = {}
-#         nasa_data["title"] = item.title.text
-#         nasa_data["description"] = item.description.text
-#         nasa_data['link'] = item.link.text
-#         nasa_data['pubDate'] = parse(item.pubDate.text)
-#         nasa_data['identifier'] = parse.find('dc:identifier').text
-#         final_output.append(nasa_data)
-        
-#     df = pd.DataFrame(final_output, columns=["title", "description", "link", "pubDate", 'identifier'])
-#     return df
 
 def sleep_decorator(function):
     def wrapper(*args, **kwargs):
@@ -49,31 +42,27 @@ def sleep_decorator(function):
         function(*args, **kwargs)
     return wrapper
 
+
 @sleep_decorator
 def send_message(response):
     """ 
     main function to iterate over the response and send message to discord
-    """
-    with open("last_identifier.txt", "r") as f:
-        last_indentifier = f.read()
-    Bs_data = BeautifulSoup(response.text, "xml")
-    for item in Bs_data.findAll("item"):
+    """ 
+    tree = ElementTree(fromstring(response.text))
+    root = tree.getroot()
+
+    for item in root.iter('item'):
         title = item.find('title').text
+        image = item.find('enclosure').attrib['url']
         description = item.find('description').text
         link = item.find('link').text
         pubDate = parse(item.find('pubDate').text)
-        identifier = item.find('dc:identifier').text
         
+        print(pubDate, est_timenow)
         
-        if identifier == last_indentifier:
-            break
-        elif identifier > last_indentifier:
-            last_indentifier = identifier
+        if pubDate > est_timenow:
+            print("New Nasa News")
             send_message_to_discord(title, description, link, pubDate)
-            
-            print("Last identifier is updated", last_indentifier)
-            with open("last_identifier.txt", "w") as fw:
-                fw.write(last_indentifier)
                 
 
 def main():
