@@ -1,40 +1,71 @@
+import os
 import requests
 from xml.etree.ElementTree import fromstring, ElementTree
 
 
-class RssFeed(object):
-    """ Rss Feed Class
-    
-    methods:
-        __get_feed -> get feed from url
-        get_title -> get title of feed
-        get_items -> get items of feed
-        get_item_by_tag -> get item by tag name from item
-    """
-    
-    def __init__(self, url):
-        self.__url = url
-        self.__feed = None
-        
-    @property
-    def feed(self):
-        if self.__feed is None:
-            self.__feed = self._get_feed()
-        return self.__feed
-    
-    def _get_feed(self):
-        response = requests.get(self.__url)
-        tree = ElementTree(fromstring(response.content))
-        return tree
+class ErrorHandling(Exception):
+	pass
 
-    def get_title(self):
-        return self.feed.find('channel/title').text
-    
-    def get_items(self):
-        items = self.feed.findall(f'channel/item')
-        total_items = len(items)
-        
-        return items, total_items
-    
-    def get_item_by_tag(self, item, tag):
-        return item.find(tag).text
+
+class RssFeed(object):
+	""" Rss Feed Class
+
+	methods:
+		__get_feed -> get feed from url
+		get_title -> get title of feed
+		get_items -> get items of feed
+		get_item_by_tag -> get item by tag name from item
+	"""
+
+	def __init__(self, path=None):
+		self.__path = path
+		self.__feed = None
+
+	def __str__(self):
+		return f'RssFeed(url={self.__path})'
+
+	@property
+	def feed(self):
+		if self.__feed is None:
+			self.__feed = self.__get_feed()
+		return self.__feed
+
+	def __feed_from_url(self, url):
+		"""
+		get feed from url
+		"""
+		response = requests.get(url)
+		tree = ElementTree(fromstring(response.content))
+		return tree
+
+	def __feed_from_file(self, filename):
+		""" get feed from file """
+		return ElementTree(file=filename)
+
+	def __get_feed(self):
+		""" get feed from url or file """
+		if self.__path.startswith('http'):
+			return self.__feed_from_url(self.__path)
+		elif self.__path.endswith('.xml'):
+			if os.path.exists(self.__path):
+				return self.__feed_from_file(self.__path)
+		else:
+			raise ErrorHandling('Invalid path or url provided for feed')
+
+	def get_title(self):
+		""" get title of feed """
+		return self.feed.find('channel/title').text
+
+	def get_items(self):
+		""" get items of feed """
+		items = self.feed.findall(f'channel/item')
+		return items
+
+	def get_item_by_tag(self, item, tag):
+		""" get item by tag name from item """
+		return item.find(tag).text
+
+	def save_feed(self, filename):
+		""" save feed to file """
+		self.feed.write(filename)
+
