@@ -1,5 +1,1 @@
-pandas
 requests
-beautifulsoup4
-sanatio
-discord-webhook
