@@ -1,3 +1,10 @@
+""" 
+Copyright (c) 2020-2021
+    - PyContributors <pycontributors@gmail.com>
+    - Deepak Raj <deepak008@live.com>
+
+License: GNU General Public License v3.0
+"""
 __title__ = 'discord-feed-bot'
 __package_name__ = 'discord-feed-bot'
 __version__ = '0.0.2'

@@ -16,15 +16,15 @@ pip install discord-feed-bot
 
 ## Usage
 
-Check out the [documentation](#) for more information on how to use RSS Feed.
+Check out the [documentation](https://discord-feed-bot.readthedocs.io/en/latest/) for more information on how to use RSS Feed.
 
 
 ```python
 from discord_ext import DiscordBot
 feed_url = ""
 discord_webhook_url = ""
-sleep_time = 60*20  # 20 minutes 
-bot = DiscordBot(discord_webhook_url, feed_url, sleep_time=sleep_time)
+sleep_time = 60 * 20  # 20 minutes 
+bot = DiscordBot(feed_url, discord_webhook_url, interval=sleep_time)
 bot.send_message_to_discord()
 ```
 
@@ -37,7 +37,7 @@ Please make sure to update tests as appropriate.
 
 ## License
 
-- [GNU General Public License v3.0](/LICENSE)
+- [GNU General Public License v3.0](https://github.com/Py-Contributors/discord-feed-bot/LICENSE)
 
 ## Authors
 

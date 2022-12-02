@@ -1,4 +1,3 @@
-import sys
 from datetime import datetime
 
 project = "discord-feed-bot"
@@ -14,4 +13,7 @@ autosectionlabel_prefix_document = True
 html_theme = 'sphinx_rtd_theme'  # 'pydata_sphinx_theme' 'alabaster'
 html_static_path = ['_static']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '.venv']
-html_sidebars = { '**': ['globaltoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html'] }
+html_sidebars = {'**': ['globaltoc.html',
+                        'relations.html',
+                        'sourcelink.html',
+                        'searchbox.html']}

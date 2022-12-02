@@ -1,84 +1,146 @@
+'''
+Copyright (c) 2020-2021
+	- PyContributors <pycontributors@gmail.com>
+	- Deepak Raj <deepak008@live.com>
 
-
+License: GNU General Public License v3.0
+'''
 import os
 import requests
-from xml.etree.ElementTree import fromstring, ElementTree
+from time import sleep
 from urllib.parse import urlparse
+from xml.etree.ElementTree import fromstring, ElementTree
+
+from discord_ext.utils import send_message_to_discord
+from discord_ext.utils import ROOT_DIR
+from discord_ext.utils import read_txt_file
+from discord_ext.utils import dump_article_title
+from discord_ext.utils import print__
+
+expand_usr = os.path.expanduser('~')
+os.makedirs(os.path.join(ROOT_DIR, 'logs'), exist_ok=True)
 
 
 class ErrorHandling(Exception):
-    pass
+	pass
 
 
 class RssFeed(object):
-    """ Rss Feed Class
+	''' Rss Feed Class
 
-    methods:
-            __get_feed -> get feed from url
-            get_title -> get title of feed
-            get_items -> get items of feed
-            get_item_by_tag -> get item by tag name from item
-    """
+	methods:
+		__get_feed -> get feed from url
+		get_title -> get title of feed
+		get_items -> get items of feed
+		get_item_by_tag -> get item by tag name from item
+	'''
+	def __init__(self, feed_url=None):
+		self.__feed_url = feed_url
 
-    def __init__(self, path=None):
-        self.__path = path
-        self.__feed = None
+	def __str__(self):
+		return f'RssFeed(url={self.__feed_url})'
 
-    def __str__(self):
-        return f'RssFeed(url={self.__path})'
+	@property
+	def feed(self):
+		return self.__get_feed()
 
-    @property
-    def feed(self):
-        if self.__feed is None:
-            self.__feed = self.__get_feed()
-        return self.__feed
-    
-    def __get_request(self, url):
-        try:
-            data = requests.get(url)
-        except Exception as e:
-            raise ErrorHandling(f'Error while getting data from {url}: {e}')
-        return data
+	def __get_request(self, url):
+		try:
+			data = requests.get(url)
+			print(f'Fetching URL -> {data.status_code}')
+		except Exception as e:
+			raise ErrorHandling(f'Error while getting data from {url}: {e}')
+		return data
 
-    def __feed_from_url(self, url):
-        """ get feed from url """
-        response = self.__get_request(url)
-        tree = ElementTree(fromstring(response.content))
-        return tree
+	def __feed_from_url(self, url):
+		''' get feed from url '''
+		response = self.__get_request(url)
+		tree = ElementTree(fromstring(response.content))
+		return tree
 
-    def __feed_from_file(self, filename):
-        """ get feed from file """
-        return ElementTree(file=filename)
+	def __feed_from_file(self, filename):
+		''' get feed from file '''
+		return ElementTree(file=filename)
 
-    def __get_feed(self):
-        """ get feed from url or file """
-        if urlparse(self.__path)[0] in ('http', 'https'):
-            return self.__feed_from_url(self.__path)
-        elif self.__path.endswith('.xml'):
-            if os.path.exists(self.__path):
-                return self.__feed_from_file(self.__path)
-            raise FileNotFoundError(f'File {self.__path} not found')
-        else:
-            raise NotImplementedError('Invalid path or url provided for feed')
+	def __get_feed(self):
+		''' get feed from url or file '''
+		if urlparse(self.__feed_url)[0] in ('http', 'https'):
+			return self.__feed_from_url(self.__feed_url)
 
-    def get_metadata(self):
-        """ get metadata of feed """
-        metadata = {}
-        metadata['title'] = self.feed.find('channel/title').text
-        metadata['link'] = self.feed.find('channel/link').text
-        metadata['description'] = self.feed.find('channel/description').text
-        metadata['language'] = self.feed.find('channel/language').text
-        return metadata
+		elif self.__feed_url.endswith('.xml'):
+			if os.path.exists(self.__feed_url):
+				return self.__feed_from_file(self.__feed_url)
+			raise FileNotFoundError(f'File {self.__feed_url} not found')
 
-    def get_items(self):
-        """ get items of feed """
-        items = self.feed.findall(f'channel/item')
-        return items
+		else:
+			raise NotImplementedError('Invalid path or url provided for feed')
 
-    def get_item_by_tag(self, item, tag):
-        """ get item by tag name from item """
-        return item.find(tag).text
+	def get_metadata(self):
+		''' get metadata of feed '''
+		metadata = {}
+		cache = self.feed
+		metadata['title'] = cache.find('channel/title').text
+		metadata['link'] = cache.find('channel/link').text
+		metadata['description'] = cache.find('channel/description').text
+		metadata['language'] = cache.find('channel/language').text
 
-    def save_feed(self, filename):
-        """ save feed to file """
-        self.feed.write(filename)
+		return metadata
+
+	def get_items(self):
+		''' get items of feed '''
+		items = self.feed.findall(f'channel/item')
+		return items
+
+	def get_item_by_tag(self, item, tag):
+		''' get item by tag name from item '''
+		return item.find(tag).text
+
+	def save_feed(self, filename):
+		''' save feed to file '''
+		self.feed.write(filename)
+
+
+class DiscordBot(RssFeed):
+	''' DiscordBot Class
+
+	methods:
+		send_message_to_discord -> send message to discord
+		save_feed -> save feed to file
+		get_metadata -> get metadata from feed
+	'''
+	def __init__(self, feed_url=None, discord_webhook_url=None, channel_id=None, interval=10):
+		super().__init__(feed_url)
+		self.discord_webhook_url = discord_webhook_url
+		self.channel_id = channel_id
+		self.interval = interval
+		self.dump_article_file = os.path.join(ROOT_DIR, 'logs', f'{self.channel_id}.txt')
+ 
+	def get_metadata(self):
+		return super().get_metadata()
+
+	def save_feed(self, filename):
+		return super().save_feed(filename)
+
+	def send_message_to_discord(self):
+		metadata = super().get_metadata()
+		feed_title = metadata['title']
+		
+		print__('green', 'Starting {} Bot'.format(feed_title))
+		print__('red', 'Running Bot... Press Ctrl+C to stop')
+		print('Checking for new articles every {} seconds'.format(self.interval))
+
+		while True:
+			items = super().get_items()[::-1]  # fetch all items from rss feed
+			dump_articles = read_txt_file(self.dump_article_file)  # read dump.txt file
+
+			for item in items:  # loop through all items
+				item_title = super().get_item_by_tag(item, 'title')
+				item_description = super().get_item_by_tag(item, 'description')
+				item_link = super().get_item_by_tag(item, 'link')
+				item_pubDate = super().get_item_by_tag(item, 'pubDate')
+
+				if item_title not in dump_articles:
+					send_message_to_discord(self.discord_webhook_url, feed_title, item_title, item_description, item_link, item_pubDate)
+					dump_article_title(self.dump_article_file, item_title)  # dump article title to txt file to avoid duplicate message
+					print('Sending message to discord')
+			sleep(self.interval)

@@ -1,3 +1,9 @@
+""" 
+Copyright (c) 2020-2021, PyContributors
+
+Author: Deepak Raj <deepak008@live.com>
+License: GNU General Public License v3.0
+"""
 import argparse
 from discord_ext.about import __version__
 
