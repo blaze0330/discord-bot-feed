@@ -9,16 +9,16 @@ import os
 import requests
 from time import sleep
 from urllib.parse import urlparse
-from xml.etree.ElementTree import fromstring, ElementTree
+from xml.etree.ElementTree import fromstring
+from xml.etree.ElementTree import ElementTree
+from xml.etree.ElementTree import ParseError
 
-from discord_ext.utils import send_message_to_discord
-from discord_ext.utils import ROOT_DIR
+from discord_ext.utils import print__
 from discord_ext.utils import read_txt_file
 from discord_ext.utils import dump_article_title
-from discord_ext.utils import print__
+from discord_ext.utils import send_message_to_discord
 
 expand_usr = os.path.expanduser('~')
-os.makedirs(os.path.join(ROOT_DIR, 'logs'), exist_ok=True)
 
 
 class ErrorHandling(Exception):
@@ -55,12 +55,19 @@ class RssFeed(object):
 	def __feed_from_url(self, url):
 		''' get feed from url '''
 		response = self.__get_request(url)
-		tree = ElementTree(fromstring(response.content))
+		try:
+			tree = ElementTree(fromstring(response.content))
+		except (ParseError) as e:
+			raise ErrorHandling(f'Error while parsing feed from {url}: {e}')
 		return tree
 
 	def __feed_from_file(self, filename):
 		''' get feed from file '''
-		return ElementTree(file=filename)
+		try:
+			tree = ElementTree(file=filename)
+		except (ParseError) as e:
+			raise ErrorHandling(f'Error while parsing feed from {filename}: {e}')
+		return tree
 
 	def __get_feed(self):
 		''' get feed from url or file '''
@@ -71,7 +78,6 @@ class RssFeed(object):
 			if os.path.exists(self.__feed_url):
 				return self.__feed_from_file(self.__feed_url)
 			raise FileNotFoundError(f'File {self.__feed_url} not found')
-
 		else:
 			raise NotImplementedError('Invalid path or url provided for feed')
 
@@ -113,7 +119,7 @@ class DiscordBot(RssFeed):
 		self.discord_webhook_url = discord_webhook_url
 		self.channel_id = channel_id
 		self.interval = interval
-		self.dump_article_file = os.path.join(ROOT_DIR, 'logs', f'{self.channel_id}.txt')
+		self.dump_article_file = os.path.join(expand_usr, 'dump.txt')
  
 	def get_metadata(self):
 		return super().get_metadata()
