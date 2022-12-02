@@ -3,16 +3,17 @@ Usage
 
 Use as a normal Python module:
 
-.. code-block:: python
-    from discord_ext import DiscordBot
+.. code:: python
 
-    feed_url = ""
-    discord_webhook_url = ""
-    sleep_time = 60*20  # 20 minutes 
+   from discord_ext import DiscordBot
+   feed_url = ""
+   discord_webhook_url = ""
+   sleep_time = 60*20  # 20 minutes 
 
-    bot = DiscordBot(feed_url, discord_webhook_url, interval=sleep_time)
+   bot = DiscordBot(feed_url, discord_webhook_url, interval=sleep_time)
 
-    bot.send_message_to_discord()
+   bot.send_message_to_discord()
+
 
 It will fetch rss feed in every 20 minutes and send new items to discord webhook.
 
@@ -25,5 +26,3 @@ Requirements
 
 - Python 3.6+
 - requests
-
-
