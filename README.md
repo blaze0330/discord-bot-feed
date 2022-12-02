@@ -1,10 +1,10 @@
 <h1 align="center">RSS Feed</h1>
-<p>Simple Python Library for Automating RSS Feed</p>
+<p align="center">Discord bot for automating RSS feed updates.</p>
 
 ## Installation
 
 ```bash
-pip install <coming soon>
+pip install discord-feed-bot
 ```
 
 ## Features
@@ -12,6 +12,7 @@ pip install <coming soon>
 - [x] Get RSS Feed from URL/File
 - [x] Get Metadata from RSS Feed
 - [x] Get Items from RSS Feed
+- [x] Auto Update RSS Feed on Discord 
 
 ## Usage
 
@@ -34,3 +35,10 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Please make sure to update tests as appropriate.
 
+## License
+
+- [GNU General Public License v3.0](/LICENSE)
+
+## Authors
+
+- [Deepak Raj](https://github.com/codePerfectPlus)
