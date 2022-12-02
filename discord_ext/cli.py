@@ -1,6 +1,5 @@
 import argparse
-from api import RssFeed
-from discord.about import __version__
+from discord_ext.about import __version__
 
 parse = argparse.ArgumentParser(prog="Rss Feed", description="Rss Feed Parser")
 parse.add_argument("-p", "--path", help="Url/Path to rss feed", required=True)

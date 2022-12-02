@@ -20,7 +20,7 @@ Check out the [documentation](#) for more information on how to use RSS Feed.
 
 
 ```python
-from discord import DiscordBot
+from discord_ext import DiscordBot
 feed_url = ""
 discord_webhook_url = ""
 sleep_time = 60*20  # 20 minutes 

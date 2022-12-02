@@ -3,10 +3,10 @@ import sys
 sys.path.append('.')
 from time import sleep
 
-from discord.api import RssFeed
-from discord.utils import send_message_to_discord
-from discord.utils import ROOT_DIR
-from discord.utils import read_txt_file, dump_article_title
+from discord_ext.api import RssFeed
+from discord_ext.utils import send_message_to_discord
+from discord_ext.utils import ROOT_DIR
+from discord_ext.utils import read_txt_file, dump_article_title
 
 expand_usr = os.path.expanduser("~")
 os.makedirs(os.path.join(ROOT_DIR, "logs"), exist_ok=True)

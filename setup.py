@@ -1,6 +1,6 @@
 import setuptools
 
-from discord.about import (
+from discord_ext.about import (
     __title__,
     __version__,
     __description__,

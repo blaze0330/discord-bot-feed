@@ -1,6 +1,6 @@
 __title__ = 'discord-feed-bot'
 __package_name__ = 'discord-feed-bot'
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 __description__ = "Discord bot for automating RSS feed updates."
 __email__ = "deepak008@live.com"
 __author__ = 'PyContributors'

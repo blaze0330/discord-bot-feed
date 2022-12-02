@@ -1,10 +1,8 @@
 import sys
-sys.path.append('.')
-from discord import about
 from datetime import datetime
 
-project = about.__package_name__
-release = about.__version__
+project = "discord-feed-bot"
+release = "0.0.2"
 templates_path = ['_templates']
 source_suffix = ".rst"
 master_doc = "index"
