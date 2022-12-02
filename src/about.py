@@ -1,5 +1,5 @@
-__title__ = ''
-__package_name__ = ''
+__title__ = 'rssfeed'
+__package_name__ = 'rssfeed'
 __version__ = '0.0.1'
 __description__ = "CLI tool for RSS feeds"
 __email__ = "deepak008@live.com"

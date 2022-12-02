@@ -1,5 +1,5 @@
 import argparse
-from src.script import RssFeed
+from api import RssFeed
 from src.about import __version__
 
 parse = argparse.ArgumentParser(prog="Rss Feed", description="Rss Feed Parser")

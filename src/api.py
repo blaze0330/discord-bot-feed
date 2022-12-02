@@ -1,6 +1,9 @@
+
+
 import os
 import requests
 from xml.etree.ElementTree import fromstring, ElementTree
+from urllib.parse import urlparse
 
 
 class ErrorHandling(Exception):
@@ -29,12 +32,17 @@ class RssFeed(object):
         if self.__feed is None:
             self.__feed = self.__get_feed()
         return self.__feed
+    
+    def __get_request(self, url):
+        try:
+            data = requests.get(url)
+        except Exception as e:
+            raise ErrorHandling(f'Error while getting data from {url}: {e}')
+        return data
 
     def __feed_from_url(self, url):
-        """
-        get feed from url
-        """
-        response = requests.get(url)
+        """ get feed from url """
+        response = self.__get_request(url)
         tree = ElementTree(fromstring(response.content))
         return tree
 
@@ -44,14 +52,14 @@ class RssFeed(object):
 
     def __get_feed(self):
         """ get feed from url or file """
-        if self.__path.startswith('http'):
+        if urlparse(self.__path)[0] in ('http', 'https'):
             return self.__feed_from_url(self.__path)
         elif self.__path.endswith('.xml'):
             if os.path.exists(self.__path):
                 return self.__feed_from_file(self.__path)
-            raise ErrorHandling(f'File {self.__path} not found')
+            raise FileNotFoundError(f'File {self.__path} not found')
         else:
-            raise ErrorHandling('Invalid path or url provided for feed')
+            raise NotImplementedError('Invalid path or url provided for feed')
 
     def get_metadata(self):
         """ get metadata of feed """
