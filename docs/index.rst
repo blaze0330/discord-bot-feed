@@ -7,7 +7,7 @@ Welcome to Discord Rss Feed documentation!
 |PyPI download month|
 
 .. |PyPI download month| image:: https://img.shields.io/pypi/dm/discord-feed-bot.svg
-   :target: https://pypi.python.org/pypi/random_profile/
+   :target: https://pypi.python.org/pypi/discord-feed-bot/
 
 |PyPI version fury.io|
 
