@@ -12,7 +12,7 @@ Welcome to Discord Rss Feed documentation!
 |PyPI version fury.io|
 
 .. |PyPI version fury.io| image:: https://badge.fury.io/py/discord-feed-bot.svg
-   :target: https://pypi.python.org/pypi/random_profile/
+   :target: https://pypi.python.org/pypi/discord-feed-bot//
    
 |Open Source Love svg3|
 
