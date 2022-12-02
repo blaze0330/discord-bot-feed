@@ -1,4 +1,5 @@
 import setuptools
+
 from discord.about import (
     __title__,
     __version__,
@@ -13,8 +14,6 @@ from discord.about import (
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-with open("requirements.txt", "r") as fh:
-    requirements = fh.read().splitlines()
 
 print("Installing {} v{}".format(__title__, __version__))
 print(__package_name__)
@@ -29,7 +28,9 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url=__github__,
-    install_requires=requirements,
+    install_requires=[
+        "requests",
+        ],
     keywords="rssfeed, rssfeedcli, rssfeed-cli",
     packages=setuptools.find_packages(),
     classifiers=[
