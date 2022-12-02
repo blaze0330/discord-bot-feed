@@ -116,10 +116,10 @@ class DiscordBot(RssFeed):
 	'''
 	def __init__(self, feed_url=None, discord_webhook_url=None, channel_id=None, interval=10):
 		super().__init__(feed_url)
-		self.discord_webhook_url = discord_webhook_url
-		self.channel_id = channel_id
-		self.interval = interval
-		self.dump_article_file = os.path.join(expand_usr, 'dump.txt')
+		self.__discord_webhook_url = discord_webhook_url
+		self.__channel_id = channel_id
+		self.__interval = interval
+		self.__dump_article_file = os.path.join(expand_usr, 'dump.txt')
  
 	def get_metadata(self):
 		return super().get_metadata()
@@ -133,11 +133,11 @@ class DiscordBot(RssFeed):
 		
 		print__('green', 'Starting {} Bot'.format(feed_title))
 		print__('red', 'Running Bot... Press Ctrl+C to stop')
-		print('Checking for new articles every {} seconds'.format(self.interval))
+		print('Checking for new articles every {} seconds'.format(self.__interval))
 
 		while True:
 			items = super().get_items()[::-1]  # fetch all items from rss feed
-			dump_articles = read_txt_file(self.dump_article_file)  # read dump.txt file
+			dump_articles = read_txt_file(self.__dump_article_file)  # read dump.txt file
 
 			for item in items:  # loop through all items
 				item_title = super().get_item_by_tag(item, 'title')
@@ -146,7 +146,7 @@ class DiscordBot(RssFeed):
 				item_pubDate = super().get_item_by_tag(item, 'pubDate')
 
 				if item_title not in dump_articles:
-					send_message_to_discord(self.discord_webhook_url, feed_title, item_title, item_description, item_link, item_pubDate)
-					dump_article_title(self.dump_article_file, item_title)  # dump article title to txt file to avoid duplicate message
+					send_message_to_discord(self.__discord_webhook_url, feed_title, item_title, item_description, item_link, item_pubDate)
+					dump_article_title(self.__dump_article_file, item_title)  # dump article title to txt file to avoid duplicate message
 					print('Sending message to discord')
-			sleep(self.interval)
+			sleep(self.__interval)

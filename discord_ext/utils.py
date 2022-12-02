@@ -32,10 +32,11 @@ def send_message_to_discord(discord_webhook_url, feed_title, item_title, item_de
     """ Send message to discord """
     webhook = DiscordWebhook(url=discord_webhook_url, username="{} Bot".format(feed_title))
     embed = DiscordEmbed(title=item_title, description=item_description, color=242424)
-    embed.add_embed_field(name="Published at", value=str(item_pubDate))
     embed.set_url(item_link)
-    embed.set_author(name='Developer(Codeperfectplus)', url='https://github.com/codeperfectplus')
-    embed.set_footer(text='{} Bot v1.0'.format(feed_title))
+    embed.add_embed_field(name="Published at", value=str(item_pubDate))
+    embed.set_author(name='{} Bot v1.0'.format(feed_title), url='https://github.com/codeperfectplus', icon_url='https://github.com/Py-Contributors/Cybel/raw/v2.0.0/images/cybel_icon.jpg')
+    embed.set_footer(text='Powered by PyContributors and Python', icon_url='https://raw.githubusercontent.com/DrakeEntity/project-Image/master/9b2ca712-347a-4987-bac7-a4c3d106ed24_200x200.png')
+    embed.set_timestamp()
     webhook.add_embed(embed)
     webhook.execute()
 
