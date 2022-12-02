@@ -28,6 +28,6 @@ Welcome to Discord Rss Feed documentation!
 .. toctree::
    :maxdepth: 2
 
-    introduction
-    installation
-    usage
+   introduction
+   installation
+   usage

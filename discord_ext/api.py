@@ -25,7 +25,12 @@ class ErrorHandling(Exception):
 	pass
 
 
-class RssFeed(object):
+class Baseclass(object):
+	def __init__(self):
+		pass
+
+
+class RssFeed(Baseclass):
 	''' Rss Feed Class
 
 	methods:
@@ -57,7 +62,7 @@ class RssFeed(object):
 		response = self.__get_request(url)
 		try:
 			tree = ElementTree(fromstring(response.content))
-		except (ParseError) as e:
+		except ParseError as e:
 			raise ErrorHandling(f'Error while parsing feed from {url}: {e}')
 		return tree
 
@@ -65,7 +70,7 @@ class RssFeed(object):
 		''' get feed from file '''
 		try:
 			tree = ElementTree(file=filename)
-		except (ParseError) as e:
+		except ParseError as e:
 			raise ErrorHandling(f'Error while parsing feed from {filename}: {e}')
 		return tree
 
@@ -128,7 +133,7 @@ class DiscordBot(RssFeed):
 		return super().save_feed(filename)
 
 	def send_message_to_discord(self):
-		metadata = super().get_metadata()
+		metadata = self.get_metadata()
 		feed_title = metadata['title']
 		
 		print__('green', 'Starting {} Bot'.format(feed_title))
@@ -139,7 +144,7 @@ class DiscordBot(RssFeed):
 			items = super().get_items()[::-1]  # fetch all items from rss feed
 			dump_articles = read_txt_file(self.__dump_article_file)  # read dump.txt file
 
-			for item in items:  # loop through all items
+			for idx, item in enumerate(items):
 				item_title = super().get_item_by_tag(item, 'title')
 				item_description = super().get_item_by_tag(item, 'description')
 				item_link = super().get_item_by_tag(item, 'link')
@@ -150,3 +155,10 @@ class DiscordBot(RssFeed):
 					dump_article_title(self.__dump_article_file, item_title)  # dump article title to txt file to avoid duplicate message
 					print('Sending message to discord')
 			sleep(self.__interval)
+   
+	def run(self):
+		self.send_message_to_discord()
+
+  
+  
+  

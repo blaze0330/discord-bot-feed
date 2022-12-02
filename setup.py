@@ -29,7 +29,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url=__github__,
     install_requires=[
-        "requests",
+        'requests==2.28.1',
+        'discord-webhook==1.0.0',
+        'colorama==0.4.6'
         ],
     keywords="rssfeed, rssfeedcli, rssfeed-cli",
     packages=setuptools.find_packages(),
