@@ -1,11 +1,24 @@
 import setuptools
-from src.about import *
+from discord.about import (
+    __title__,
+    __version__,
+    __description__,
+    __package_name__,
+    __author__,
+    __email__,
+    __license__,
+    __github__
+)
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 with open("requirements.txt", "r") as fh:
     requirements = fh.read().splitlines()
+
+print("Installing {} v{}".format(__title__, __version__))
+print(__package_name__)
+
 
 setuptools.setup(
     name=__package_name__,
@@ -22,7 +35,6 @@ setuptools.setup(
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GNU General Public License v3.0",
         "Operating System :: OS Independent",
         "Intended Audience :: End Users/Desktop",
         "Intended Audience :: Developers",

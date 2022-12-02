@@ -1,6 +1,6 @@
-__title__ = 'rssfeed'
-__package_name__ = 'rssfeed'
-__version__ = '0.0.1'
+__title__ = 'discord-rss-bot'
+__package_name__ = 'discord-rss-bot'
+__version__ = '0.0.4'
 __description__ = "CLI tool for RSS feeds"
 __email__ = "deepak008@live.com"
 __author__ = 'PyContributors'
