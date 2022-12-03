@@ -15,10 +15,6 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 
-print("Installing {} v{}".format(__title__, __version__))
-print(__package_name__)
-
-
 setuptools.setup(
     name=__package_name__,
     version=__version__,
@@ -33,16 +29,20 @@ setuptools.setup(
         'discord-webhook==1.0.0',
         'colorama==0.4.6'
         ],
-    keywords="rssfeed, rssfeedcli, rssfeed-cli",
+    keywords="rssfeed, rssfeedcli, rssfeed-cli, discord-bot",
     packages=setuptools.find_packages(),
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 5 - Production/Stable",
+        "Environment :: Plugins",
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
         "Intended Audience :: End Users/Desktop",
         "Intended Audience :: Developers",
+        "Intended Audience :: Information Technology",
+        "Intended Audience :: Telecommunications Industry",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     ],
-    python_requires=">=3.1",
+    python_requires=">=3.6",
     # entry_points={
     #     "console_scripts": ["movens = movens.cli:main"],
     # },

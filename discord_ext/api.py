@@ -12,11 +12,13 @@ from urllib.parse import urlparse
 from xml.etree.ElementTree import fromstring
 from xml.etree.ElementTree import ElementTree
 from xml.etree.ElementTree import ParseError
+from typing import List, Dict
 
 from discord_ext.utils import print__
-from discord_ext.utils import read_txt_file
-from discord_ext.utils import dump_article_title
-from discord_ext.utils import send_message_to_discord
+from discord_ext.utils import _read_txt_file
+from discord_ext.utils import _dump_article_title
+from discord_ext.utils import _send_message_discord_subfunction
+from discord_ext.about import __version__
 
 expand_usr = os.path.expanduser('~')
 
@@ -30,8 +32,8 @@ class Baseclass(object):
 		pass
 
 
-class RssFeed(Baseclass):
-	''' Rss Feed Class
+class FeedParser(Baseclass):
+	''' Rss Feed Parser class
 
 	methods:
 		__get_feed -> get feed from url
@@ -86,7 +88,7 @@ class RssFeed(Baseclass):
 		else:
 			raise NotImplementedError('Invalid path or url provided for feed')
 
-	def get_metadata(self):
+	def get_metadata(self) -> Dict:
 		''' get metadata of feed '''
 		metadata = {}
 		cache = self.feed
@@ -97,21 +99,30 @@ class RssFeed(Baseclass):
 
 		return metadata
 
-	def get_items(self):
+	def get_items(self) -> List:
 		''' get items of feed '''
 		items = self.feed.findall(f'channel/item')
 		return items
 
-	def get_item_by_tag(self, item, tag):
-		''' get item by tag name from item '''
+	def get_item_by_tag(self, item, tag) -> str:
+		''' get item by tag name from item 
+		
+		parameters:
+			item -> item from feed items
+			tag -> tag name
+  		'''
 		return item.find(tag).text
 
-	def save_feed(self, filename):
-		''' save feed to file '''
+	def save_feed(self, filename="feed.xml") -> None:
+		""" Save feed to xml file format 
+		
+		parameters:
+			filename -> filename to save feed, default is feed.xml
+  		"""
 		self.feed.write(filename)
 
 
-class DiscordBot(RssFeed):
+class DiscordBot(FeedParser):
 	''' DiscordBot Class
 
 	methods:
@@ -127,12 +138,28 @@ class DiscordBot(RssFeed):
 		self.__dump_article_file = os.path.join(expand_usr, 'dump.txt')
  
 	def get_metadata(self):
+		""" get metadata from feed 
+
+		it will call FeedParser.get_metadata function to get metadata from feed
+  		"""
 		return super().get_metadata()
 
 	def save_feed(self, filename):
+		""" Save feed to xml file format 
+
+		Parameters:
+			filename (str): filename to save feed, must be in xml format
+		"""
 		return super().save_feed(filename)
 
 	def send_message_to_discord(self):
+		""" send message to discord 
+
+		it will send message to discord channel, if there is any new article in feed url after checking with dump.txt file
+		if there is no new article, it will sleep for n seconds and check again. 
+		if there is new article, it will send message to discord channel and update dump.txt file
+		  """
+		
 		metadata = self.get_metadata()
 		feed_title = metadata['title']
 		
@@ -142,7 +169,7 @@ class DiscordBot(RssFeed):
 
 		while True:
 			items = super().get_items()[::-1]  # fetch all items from rss feed
-			dump_articles = read_txt_file(self.__dump_article_file)  # read dump.txt file
+			dump_articles = _read_txt_file(self.__dump_article_file)  # read dump.txt file
 
 			for idx, item in enumerate(items):
 				item_title = super().get_item_by_tag(item, 'title')
@@ -151,12 +178,15 @@ class DiscordBot(RssFeed):
 				item_pubDate = super().get_item_by_tag(item, 'pubDate')
 
 				if item_title not in dump_articles:
-					send_message_to_discord(self.__discord_webhook_url, feed_title, item_title, item_description, item_link, item_pubDate)
-					dump_article_title(self.__dump_article_file, item_title)  # dump article title to txt file to avoid duplicate message
+					_send_message_discord_subfunction(self.__discord_webhook_url, self.__channel_id, __version__, feed_title, item_title, item_description, item_link, item_pubDate, )
+					_dump_article_title(self.__dump_article_file, item_title)  # dump article title to txt file to avoid duplicate message
 					print('Sending message to discord')
 			sleep(self.__interval)
    
 	def run(self):
+		""" main function to run the bot
+		it will call send_message_to_discord function to send message to discord
+		  """
 		self.send_message_to_discord()
 
   
