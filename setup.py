@@ -14,6 +14,8 @@ from discord_ext.about import (
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+with open("requirements.txt", "r") as fh:
+    requirements = fh.read().splitlines()
 
 setuptools.setup(
     name=__package_name__,
