@@ -15,12 +15,13 @@ from xml.etree.ElementTree import ParseError
 from typing import List, Dict
 
 from discord_ext.utils import print__
-from discord_ext.utils import _read_txt_file
-from discord_ext.utils import _dump_article_title
+from discord_ext.utils import FileReaderWriter
 from discord_ext.utils import _send_message_discord_subfunction
 from discord_ext.about import __version__
 
 expand_usr = os.path.expanduser('~')
+dump_article_file = os.path.join(expand_usr, 'dump.txt')
+file_rw = FileReaderWriter(dump_article_file)
 
 
 class ErrorHandling(Exception):
@@ -134,7 +135,6 @@ class DiscordBot(FeedParser):
 		super().__init__(feed_url)
 		self.__discord_webhook_urls = discord_webhook_urls
 		self.__interval = interval
-		self.__dump_article_file = os.path.join(expand_usr, 'dump.txt')
 		print(self.__discord_webhook_urls)
  
 	def get_metadata(self):
@@ -169,7 +169,7 @@ class DiscordBot(FeedParser):
 
 		while True:
 			items = super().get_items()[::-1]  # fetch all items from rss feed
-			dump_articles = _read_txt_file(self.__dump_article_file)  # read dump.txt file
+			dump_articles = file_rw.read_txt_file()
 
 			for idx, item in enumerate(items):
 				item_title = super().get_item_by_tag(item, 'title')
@@ -179,7 +179,7 @@ class DiscordBot(FeedParser):
 
 				if item_title not in dump_articles:
 					_send_message_discord_subfunction(self.__discord_webhook_urls, __version__, feed_title, item_title, item_description, item_link, item_pubDate)
-					_dump_article_title(self.__dump_article_file, item_title)  # dump article title to txt file to avoid duplicate message
+					file_rw.dump_article_title(item_title)
 					print('Sending message to discord')
 			sleep(self.__interval)
    

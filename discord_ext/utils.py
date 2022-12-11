@@ -68,31 +68,50 @@ def _send_message_discord_subfunction(discord_webhook_urls: list,
         webhook.add_embed(embed)
         webhook.execute()
 
+class FileReadError(Exception):
+    """ Exception for file read error """
+    pass
 
-def _read_txt_file(filename):
-    """ Read txt file and return list of lines 
+class FileWriteError(Exception):
+    """ Exception for file write error """
+    pass
+
+class FileDumpError(Exception):
+    """ Exception for file dump error """
+    pass
+
+class FileDumpArticleTitleError(Exception):
+    """ Exception for file dump article title error """
+    pass
+
+
+class FileReaderWriter(object):
+    def __init__(self, filename):
+        self.filename = filename
     
-    Used to read article titles from txt file to avoid duplicate messages on discord
-    whenever the bot will send message to discord it will check if the article title is already
-    if it is already present in the txt file then it will not send message to discord. otherwise it will send message to discord
-    and dump the article title in the txt file
-    """
+    def read_txt_file(self):
+        """ Read txt file and return list of lines 
+        Used to read article titles from txt file to avoid duplicate messages on discord
+        whenever the bot will send message to discord it will check if the article title is already
+        if it is already present in the txt file then it will not send message to discord. otherwise it will send message to discord
+        and dump the article title in the txt file
+        """
+        try:
+            with open(self.filename, "r") as f:
+                return f.read().splitlines()
+        except Exception as e:
+            raise FileReadError(e)
+
+    def dump_article_title(self, article_title):
+        """ Dump article title in txt file 
     
-    if not os.path.isfile(filename):
-        with open(filename, "w") as f:
-            f.write("")
-    with open(filename, "r") as f:
-        dump_article = f.read().splitlines()
+        Dump article title in txt file to avoid duplicate messages on discord, 
+        whenever the bot will send message to discord it will check if the article title is already
+        and it will dump the article title in the txt file if it is not already present in the txt file
+        """
+        try:
+            with open(self.filename, "w") as f:
+                f.write(article_title)
+        except Exception as e:
+            raise FileWriteError(e)
 
-    return dump_article
-
-
-def _dump_article_title(filename, article_title):
-    """ Dump article title in txt file 
-    
-    Dump article title in txt file to avoid duplicate messages on discord, 
-    whenever the bot will send message to discord it will check if the article title is already
-    and it will dump the article title in the txt file if it is not already present in the txt file
-    """
-    with open(filename, "a") as f:
-        f.write(article_title + "\n")
