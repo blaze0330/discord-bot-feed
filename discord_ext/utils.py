@@ -27,9 +27,20 @@ def print__(color, text):
     """ Print function to print colored text """
     print(colors_dict[color] + text + colors_dict['reset'])
 
+def _create_embed(feed_title: str, bot_version: str, item_title: str, item_description: str, item_link: str, item_pubDate: str):
+    """ Create embed for discord webhook """
+    embed = DiscordEmbed(title=item_title, description=item_description, color=242424)
+    embed.set_url(item_link)
+    embed.add_embed_field(name="Published at", value=str(item_pubDate))
+    embed.set_author(name='{} Bot v{}'.format(feed_title, bot_version), 
+                     url='https://github.com/codeperfectplus', 
+                     icon_url='https://github.com/Py-Contributors/Cybel/raw/v2.0.0/images/cybel_icon.jpg')
+    embed.set_footer(text='Powered by PyContributors and Python', 
+                     icon_url='https://raw.githubusercontent.com/DrakeEntity/project-Image/master/9b2ca712-347a-4987-bac7-a4c3d106ed24_200x200.png')
+    embed.set_timestamp()
+    return embed
 
-def _send_message_discord_subfunction(discord_webhook_url: str, 
-                            channel_id: str, 
+def _send_message_discord_subfunction(discord_webhook_urls: list, 
                             bot_version: str,
                             feed_title: str,
                             item_title: str, 
@@ -50,18 +61,12 @@ def _send_message_discord_subfunction(discord_webhook_url: str,
     item_link: str -> Item link from feedparser
     item_pubDate: str -> Item pubDate from feedparser
     """
-    webhook = DiscordWebhook(url=discord_webhook_url, username="{} Bot".format(feed_title))
-    embed = DiscordEmbed(title=item_title, description=item_description, color=242424)
-    embed.set_url(item_link)
-    embed.add_embed_field(name="Published at", value=str(item_pubDate))
-    embed.set_author(name='{} Bot v{}'.format(feed_title, bot_version), 
-                     url='https://github.com/codeperfectplus', 
-                     icon_url='https://github.com/Py-Contributors/Cybel/raw/v2.0.0/images/cybel_icon.jpg')
-    embed.set_footer(text='Powered by PyContributors and Python', 
-                     icon_url='https://raw.githubusercontent.com/DrakeEntity/project-Image/master/9b2ca712-347a-4987-bac7-a4c3d106ed24_200x200.png')
-    embed.set_timestamp()
-    webhook.add_embed(embed)
-    webhook.execute()
+    embed = _create_embed(feed_title, bot_version, item_title, item_description, item_link, item_pubDate)
+
+    for discord_webhook_url in discord_webhook_urls:  # loop through all discord webhook urls
+        webhook = DiscordWebhook(url=discord_webhook_url, username="{} Bot".format(feed_title), content="New article published")
+        webhook.add_embed(embed)
+        webhook.execute()
 
 
 def _read_txt_file(filename):

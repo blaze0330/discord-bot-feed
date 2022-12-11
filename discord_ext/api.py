@@ -130,12 +130,12 @@ class DiscordBot(FeedParser):
 		save_feed -> save feed to file
 		get_metadata -> get metadata from feed
 	'''
-	def __init__(self, feed_url=None, discord_webhook_url=None, channel_id=None, interval=10):
+	def __init__(self, feed_url=None, discord_webhook_urls=None, channel_id=None, interval=10):
 		super().__init__(feed_url)
-		self.__discord_webhook_url = discord_webhook_url
-		self.__channel_id = channel_id
+		self.__discord_webhook_urls = discord_webhook_urls
 		self.__interval = interval
 		self.__dump_article_file = os.path.join(expand_usr, 'dump.txt')
+		print(self.__discord_webhook_urls)
  
 	def get_metadata(self):
 		""" get metadata from feed 
@@ -178,7 +178,7 @@ class DiscordBot(FeedParser):
 				item_pubDate = super().get_item_by_tag(item, 'pubDate')
 
 				if item_title not in dump_articles:
-					_send_message_discord_subfunction(self.__discord_webhook_url, self.__channel_id, __version__, feed_title, item_title, item_description, item_link, item_pubDate, )
+					_send_message_discord_subfunction(self.__discord_webhook_urls, __version__, feed_title, item_title, item_description, item_link, item_pubDate)
 					_dump_article_title(self.__dump_article_file, item_title)  # dump article title to txt file to avoid duplicate message
 					print('Sending message to discord')
 			sleep(self.__interval)
