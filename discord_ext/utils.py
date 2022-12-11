@@ -76,16 +76,23 @@ class FileWriteError(Exception):
     """ Exception for file write error """
     pass
 
-class FileDumpError(Exception):
-    """ Exception for file dump error """
-    pass
-
 class FileDumpArticleTitleError(Exception):
     """ Exception for file dump article title error """
     pass
 
 
 class FileReaderWriter(object):
+    """ File reader and writer class 
+    
+    Used to read and write txt file
+
+    Attributes:
+    filename: str -> filename of the txt file
+    
+    Methods:
+        read_txt_file: Read txt file and return list of lines
+        dump_article_title: Dump article title in txt file
+    """
     def __init__(self, filename):
         self.filename = filename
     
@@ -95,6 +102,11 @@ class FileReaderWriter(object):
         whenever the bot will send message to discord it will check if the article title is already
         if it is already present in the txt file then it will not send message to discord. otherwise it will send message to discord
         and dump the article title in the txt file
+
+        Returns:
+            list: list of lines
+        Raises:
+            FileReadError: If there is any error while reading the file
         """
         try:
             with open(self.filename, "r") as f:
@@ -108,10 +120,19 @@ class FileReaderWriter(object):
         Dump article title in txt file to avoid duplicate messages on discord, 
         whenever the bot will send message to discord it will check if the article title is already
         and it will dump the article title in the txt file if it is not already present in the txt file
+
+        Args:
+            article_title: str -> article title to be dumped in txt file
+
+        Raises:
+            FileWriteError: If there is any error while writing the file
         """
         try:
             with open(self.filename, "w") as f:
-                f.write(article_title)
+                try:
+                    f.write(article_title)
+                except Exception as e:
+                    raise FileDumpArticleTitleError(e)
         except Exception as e:
             raise FileWriteError(e)
 
