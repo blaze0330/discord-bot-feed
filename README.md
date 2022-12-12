@@ -1,5 +1,7 @@
-<h1 align="center">RSS Feed</h1>
-<p align="center">Discord bot for automating RSS feed updates.</p>
+<p align="center">
+  <a href="https://py-contributors.github.io/audiobook/"><img src="https://capsule-render.vercel.app/api?type=rect&color=009ACD&height=100&section=header&text=Discord-Feed-Bot&fontSize=80%&fontColor=ffffff" alt="website title image"></a>
+  <h2 align="center">👉 Discord bot for automating RSS feed updates 👈</h2>
+</p>
 
 <p align="center">
     <a href="https://twitter.com/pycontributors"><img src="https://img.shields.io/twitter/follow/pycontributors?style=social" alt="Twitter" /></a>
